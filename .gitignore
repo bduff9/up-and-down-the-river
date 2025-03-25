@@ -2,4 +2,17 @@ node_modules
 
 /.cache
 /build
+/coverage
+/storybook-static
 .env
+
+*storybook.log
+.DS_Store
+*.log
+
+# Vitest related
+__snapshots__/**/*.snap
+*.tsbuildinfo
+
+# Temporary files
+.tmp/

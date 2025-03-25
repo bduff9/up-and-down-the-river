@@ -1,0 +1,14 @@
+/* Import the Tailwind CSS styles */
+@import '../app/styles/tailwind.css';
+
+/* Additional Storybook-specific styles */
+.sb-show-main {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* Force the body to have background color */
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
