@@ -39,7 +39,7 @@ export const Default: Story = {
 	args: {
 		round: sampleRound,
 		onSave: (updatedRound) => {
-			console.log('Trump selected:', updatedRound.trumpSuit);
+			/* NOOP */
 		},
 	},
 };
@@ -51,7 +51,7 @@ export const WithTrumpSelected: Story = {
 			trumpSuit: 'hearts',
 		},
 		onSave: (updatedRound) => {
-			console.log('Trump selected:', updatedRound.trumpSuit);
+			/* NOOP */
 		},
 	},
 };

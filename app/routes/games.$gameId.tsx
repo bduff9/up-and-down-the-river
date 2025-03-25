@@ -40,6 +40,11 @@ const GamePage: React.FC = () => {
 				return;
 			}
 
+			if (gameData.rounds.length === 0 && gameData.currentRound !== 1) {
+				// Ensure we're starting at round 1 for a new game
+				gameData.currentRound = 1;
+			}
+
 			setGame(gameData);
 
 			// Get current round
@@ -47,6 +52,7 @@ const GamePage: React.FC = () => {
 
 			if (roundData) {
 				setCurrentRound(roundData);
+
 				// Determine if we're in trump selection, bid, or tricks phase
 				if (roundData.trumpSuit === null) {
 					setTrumpSelectionPhase(true);
@@ -61,6 +67,7 @@ const GamePage: React.FC = () => {
 			} else {
 				// Create a new round
 				const newRound = createRound(gameData.currentRound, gameData);
+
 				setCurrentRound(newRound);
 				setTrumpSelectionPhase(true);
 				setBidPhase(false);
@@ -183,16 +190,16 @@ const GamePage: React.FC = () => {
 	}
 
 	return (
-		<div className="container py-8 space-y-8">
-			<header className="flex justify-between items-center">
+		<div className="container py-8 space-y-8 max-w-full px-4">
+			<header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
 				<h1 className="text-2xl font-bold">Game #{game.id.substring(0, 8)}</h1>
 				<Button variant="outline" asChild>
 					<Link to="/">Back to Home</Link>
 				</Button>
 			</header>
 
-			<div className="grid gap-8 md:grid-cols-2">
-				<div className="space-y-6">
+			<div className="grid gap-8 grid-cols-1 md:grid-cols-2">
+				<div className="space-y-6 w-full overflow-hidden">
 					<RoundTracker game={game} currentRound={currentRound} />
 
 					{!game.isComplete && (
@@ -217,17 +224,17 @@ const GamePage: React.FC = () => {
 					)}
 				</div>
 
-				<div>
+				<div className="w-full overflow-hidden">
 					<Scoreboard game={game} />
 				</div>
 			</div>
 
 			{game.isComplete && (
-				<div className="flex justify-center gap-4 pt-4">
-					<Button variant="outline" asChild>
+				<div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+					<Button variant="outline" asChild className="w-full sm:w-auto">
 						<Link to="/">Back to Home</Link>
 					</Button>
-					<Button asChild>
+					<Button asChild className="w-full sm:w-auto">
 						<Link to="/new">Start New Game</Link>
 					</Button>
 				</div>

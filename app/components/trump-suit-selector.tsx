@@ -65,7 +65,12 @@ export const TrumpSuitSelector: React.FC<TrumpSuitSelectorProps> = ({ round, onS
 				</RadioGroup>
 			</CardContent>
 			<CardFooter>
-				<Button onClick={handleSave} className="w-full" disabled={selectedSuit === null}>
+				<Button
+					onClick={handleSave}
+					className="w-full"
+					disabled={selectedSuit === null}
+					variant="success"
+				>
 					Set Trump Suit
 				</Button>
 			</CardFooter>

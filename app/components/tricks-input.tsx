@@ -193,7 +193,12 @@ export const TricksInput: React.FC<TricksInputProps> = ({
 				</div>
 			</CardContent>
 			<CardFooter>
-				<Button onClick={handleSave} className="w-full" disabled={!isValid || !!validationError}>
+				<Button
+					onClick={handleSave}
+					className="w-full"
+					disabled={!isValid || !!validationError}
+					variant="success"
+				>
 					Save Tricks
 				</Button>
 			</CardFooter>

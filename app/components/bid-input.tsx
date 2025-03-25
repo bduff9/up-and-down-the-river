@@ -149,7 +149,7 @@ export const BidInput: React.FC<BidInputProps> = ({ players, round, onSave }) =>
 				</div>
 			</CardContent>
 			<CardFooter>
-				<Button onClick={handleSave} className="w-full">
+				<Button onClick={handleSave} className="w-full" variant="success">
 					Save Bids
 				</Button>
 			</CardFooter>

@@ -1,5 +1,5 @@
 import type * as React from 'react';
-import { isRoundComplete } from '~/lib/game-utils';
+import { calculateGameStructure, isRoundComplete } from '~/lib/game-utils';
 import type { Game, Round } from '~/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
@@ -30,68 +30,31 @@ function formatTrumpSuit(suit: string | null): React.ReactNode {
 	);
 }
 
-// Helper function to calculate game structure
-function calculateGameStructure(playerCount: number): {
-	maxCardsPerPlayer: number;
-	totalRounds: number;
-	roundsStructure: number[];
-} {
-	let maxCardsPerPlayer: number;
-
-	// Determine maximum cards per player based on player count
-	if (playerCount <= 5) {
-		maxCardsPerPlayer = 10;
-	} else if (playerCount === 6) {
-		maxCardsPerPlayer = 8;
-	} else {
-		maxCardsPerPlayer = 7;
-	}
-
-	// Calculate descending and ascending rounds
-	const descendingRounds = Array.from(
-		{ length: maxCardsPerPlayer },
-		(_, i) => maxCardsPerPlayer - i,
-	);
-
-	const ascendingRounds = Array.from({ length: maxCardsPerPlayer - 1 }, (_, i) => i + 2);
-
-	const roundsStructure = [...descendingRounds, 1, ...ascendingRounds];
-
-	return {
-		maxCardsPerPlayer,
-		totalRounds: roundsStructure.length,
-		roundsStructure,
-	};
-}
-
 export const RoundTracker: React.FC<RoundTrackerProps> = ({ game, currentRound }) => {
-	const { roundsStructure } = calculateGameStructure(game.players.length);
+	// Use the game's customMaxCards value directly if it exists
+	const { roundsStructure } = calculateGameStructure(game.players.length, game.customMaxCards);
 
 	return (
 		<Card>
-			<CardHeader className="pb-3">
+			<CardHeader className="pb-2">
 				<CardTitle>Round {currentRound.number}</CardTitle>
 				<CardDescription>
-					{currentRound.cardsPerPlayer} card
-					{currentRound.cardsPerPlayer !== 1 ? 's' : ''} per player
-					{currentRound.trumpSuit && ' • Trump: '}
-					{currentRound.trumpSuit && formatTrumpSuit(currentRound.trumpSuit)}
+					{currentRound.cardsPerPlayer} {currentRound.cardsPerPlayer === 1 ? 'card' : 'cards'}
+					{currentRound.trumpSuit && <> • Trump: {formatTrumpSuit(currentRound.trumpSuit)}</>}
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<div className="flex space-x-1 overflow-x-auto pb-1">
+				<div className="flex flex-wrap gap-1.5">
 					{roundsStructure.map((cards, index) => {
 						const roundNumber = index + 1;
+						const isPastRound = roundNumber < currentRound.number;
 						const isCurrentRound = roundNumber === currentRound.number;
-						const isPastRound = game.rounds.some(
-							(r) => r.number === roundNumber && isRoundComplete(r),
-						);
 
 						return (
 							<div
 								key={roundNumber}
 								className={`
-                  flex-shrink-0 w-8 h-8 rounded flex items-center justify-center text-xs
+                  flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded flex items-center justify-center text-xs
                   ${isCurrentRound ? 'bg-primary text-primary-foreground' : ''}
                   ${isPastRound ? 'bg-muted line-through' : ''}
                   ${!isCurrentRound && !isPastRound ? 'bg-muted/40' : ''}
@@ -103,7 +66,7 @@ export const RoundTracker: React.FC<RoundTrackerProps> = ({ game, currentRound }
 						);
 					})}
 				</div>
-				<div className="text-sm text-muted-foreground mt-2">
+				<div className="text-xs sm:text-sm text-muted-foreground mt-2">
 					Progress: {game.rounds.filter(isRoundComplete).length} / {game.maxRounds} rounds complete
 				</div>
 			</CardContent>

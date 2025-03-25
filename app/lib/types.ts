@@ -65,4 +65,5 @@ export type Game = {
 	maxRounds: number;
 	currentRound: number;
 	winner?: Player;
+	customMaxCards?: number; // Store the max cards setting for custom games
 };

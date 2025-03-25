@@ -44,24 +44,29 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 					{game.isComplete ? 'Game completed' : `Round ${game.currentRound} of ${game.maxRounds}`}
 				</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<div className="overflow-x-auto">
-					<table className="w-full text-sm">
+			<CardContent className="px-0 sm:px-6">
+				<div className="overflow-x-auto -mx-1 px-1">
+					<table className="w-full text-xs sm:text-sm">
 						<thead>
 							<tr className="border-b">
-								<th className="text-left py-2 pr-4 font-medium">Player</th>
+								<th className="text-left py-1 sm:py-2 px-2 sm:pr-4 font-medium whitespace-nowrap">
+									Player
+								</th>
 								{rounds.map((round) => (
-									<th key={round.number} className="text-center p-2 min-w-12 font-medium">
+									<th
+										key={round.number}
+										className="text-center p-1 sm:p-2 min-w-8 sm:min-w-12 font-medium"
+									>
 										{round.number}
 									</th>
 								))}
-								<th className="text-center p-2 font-medium">Total</th>
+								<th className="text-center p-1 sm:p-2 font-medium whitespace-nowrap">Total</th>
 							</tr>
 						</thead>
 						<tbody>
 							{playerScores.map(({ player, totalScore }) => (
 								<tr key={player.id} className="border-b last:border-0">
-									<td className="py-2 pr-4 font-medium">
+									<td className="py-1 sm:py-2 px-2 sm:pr-4 font-medium whitespace-nowrap">
 										{player.name}
 										{playerScores[0].player.id === player.id && (
 											<span className="ml-1 text-xs text-amber-500">★</span>
@@ -72,7 +77,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 										const result = getPlayerRoundResult(player.id, round.number);
 										if (!result)
 											return (
-												<td key={round.number} className="text-center p-2">
+												<td key={round.number} className="text-center p-1 sm:p-2">
 													-
 												</td>
 											);
@@ -82,7 +87,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 										return (
 											<td
 												key={round.number}
-												className={`text-center p-2 ${madeBid ? 'text-green-600' : 'text-destructive'}`}
+												className={`text-center p-1 sm:p-2 ${madeBid ? 'text-green-600' : 'text-destructive'}`}
 												title={`Bid: ${result.bid}, Took: ${result.tricksTaken}`}
 											>
 												{result.roundScore}
@@ -90,7 +95,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 										);
 									})}
 
-									<td className="text-center p-2 font-bold">{totalScore}</td>
+									<td className="text-center p-1 sm:p-2 font-bold">{totalScore}</td>
 								</tr>
 							))}
 						</tbody>

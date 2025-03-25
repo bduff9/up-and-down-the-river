@@ -53,25 +53,33 @@ export const GameHistory: React.FC = () => {
 							{sortedGames.map((game) => (
 								<div
 									key={game.id}
-									className="border rounded-md p-4 flex flex-col md:flex-row justify-between gap-4"
+									className="border rounded-md p-3 sm:p-4 flex flex-col md:flex-row justify-between gap-3 sm:gap-4"
 								>
-									<div>
-										<div className="font-medium">{game.players.map((p) => p.name).join(', ')}</div>
-										<div className="text-sm text-muted-foreground">
+									<div className="min-w-0">
+										<div className="font-medium text-sm sm:text-base truncate">
+											{game.players.map((p) => p.name).join(', ')}
+										</div>
+										<div className="text-xs sm:text-sm text-muted-foreground">
 											{new Date(game.createdAt).toLocaleDateString()} •{' '}
 											{game.isComplete
 												? 'Completed'
 												: `Round ${game.currentRound}/${game.maxRounds}`}
 										</div>
-										<div className="text-sm mt-1">Scoring: {game.scoringRule.config.name}</div>
+										<div className="text-xs sm:text-sm mt-1">
+											Scoring: {game.scoringRule.config.name}
+										</div>
 										{game.isComplete && game.winner && (
-											<div className="text-sm mt-1 font-medium text-green-600">
+											<div className="text-xs sm:text-sm mt-1 font-medium text-green-600">
 												Winner: {game.winner.name}
 											</div>
 										)}
 									</div>
-									<div className="flex gap-2 self-end md:self-center">
-										<Button variant="outline" size="sm" onClick={() => handleResumeGame(game.id)}>
+									<div className="flex gap-2 self-end md:self-center shrink-0 mt-2 md:mt-0">
+										<Button
+											variant={game.isComplete ? 'outline' : 'outline'}
+											size="sm"
+											onClick={() => handleResumeGame(game.id)}
+										>
 											{game.isComplete ? 'View' : 'Resume'}
 										</Button>
 										<Button

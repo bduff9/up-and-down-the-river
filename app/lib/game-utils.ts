@@ -5,30 +5,41 @@ import type { Game, Player, Round, ScoringRule } from './types';
 /**
  * Calculate the game structure based on player count
  */
-export function calculateGameStructure(playerCount: number): {
+export function calculateGameStructure(
+	playerCount: number,
+	customMaxCards?: number,
+): {
 	maxCardsPerPlayer: number;
 	totalRounds: number;
 	roundsStructure: number[];
 } {
 	let maxCardsPerPlayer: number;
 
-	// Determine maximum cards per player based on player count
-	if (playerCount <= 5) {
-		maxCardsPerPlayer = 10;
-	} else if (playerCount === 6) {
-		maxCardsPerPlayer = 8;
+	// Use custom max cards if provided, otherwise determine by player count
+	if (customMaxCards !== undefined) {
+		maxCardsPerPlayer = customMaxCards;
 	} else {
-		maxCardsPerPlayer = 7;
+		// Determine maximum cards per player based on player count
+		if (playerCount <= 5) {
+			maxCardsPerPlayer = 10;
+		} else if (playerCount === 6) {
+			maxCardsPerPlayer = 8;
+		} else {
+			maxCardsPerPlayer = 7;
+		}
 	}
 
 	// Calculate descending and ascending rounds
+	// This creates rounds from max cards down to 1
 	const descendingRounds = Array.from(
 		{ length: maxCardsPerPlayer },
 		(_, i) => maxCardsPerPlayer - i,
 	);
 
+	// This creates rounds from 2 up to max cards
 	const ascendingRounds = Array.from({ length: maxCardsPerPlayer - 1 }, (_, i) => i + 2);
 
+	// Full round structure: [max, max-1, ..., 2, 1, 2, ..., max-1, max]
 	const roundsStructure = [...descendingRounds, 1, ...ascendingRounds];
 
 	return {
@@ -41,8 +52,12 @@ export function calculateGameStructure(playerCount: number): {
 /**
  * Create a new game
  */
-export function createGame(players: Player[], scoringRuleType: string): Game {
-	const { totalRounds, roundsStructure } = calculateGameStructure(players.length);
+export function createGame(
+	players: Player[],
+	scoringRuleType: string,
+	customMaxCards?: number,
+): Game {
+	const { totalRounds, roundsStructure } = calculateGameStructure(players.length, customMaxCards);
 
 	const scoringRule: ScoringRule = {
 		type: scoringRuleType as 'standard' | 'simple' | 'common' | 'penalty' | 'custom',
@@ -59,6 +74,8 @@ export function createGame(players: Player[], scoringRuleType: string): Game {
 		isComplete: false,
 		maxRounds: totalRounds,
 		currentRound: 1,
+		// Store the custom max cards value for reference
+		customMaxCards,
 	};
 }
 
@@ -66,11 +83,17 @@ export function createGame(players: Player[], scoringRuleType: string): Game {
  * Create a new round
  */
 export function createRound(roundNumber: number, game: Game): Round {
-	const { roundsStructure } = calculateGameStructure(game.players.length);
+	// If the game has a stored customMaxCards value, use it directly
+	const { roundsStructure } = calculateGameStructure(game.players.length, game.customMaxCards);
+
+	// Ensure round number is within valid range
+	const safeRoundNumber = Math.min(Math.max(1, roundNumber), roundsStructure.length);
+	// We need to use index (safeRoundNumber - 1) to get the correct cards for this round
+	const cardsForRound = roundsStructure[safeRoundNumber - 1] || 1;
 
 	return {
 		number: roundNumber,
-		cardsPerPlayer: roundsStructure[roundNumber - 1],
+		cardsPerPlayer: cardsForRound,
 		trumpSuit: null,
 		playerResults: game.players.map((player) => ({
 			playerId: player.id,
