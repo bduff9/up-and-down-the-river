@@ -10,11 +10,11 @@ export type Player = {
  * Result for a player in a specific round
  */
 export type PlayerRoundResult = {
-	playerId: string;
-	bid: number;
-	tricksTaken: number;
-	roundScore: number;
-};
+		playerId: string;
+		bid: number | null;
+		tricksTaken: number;
+		roundScore: number;
+	};
 
 /**
  * Round model representing a single round in the game
@@ -25,6 +25,11 @@ export type Round = {
 	trumpSuit: string | null;
 	playerResults: PlayerRoundResult[];
 };
+
+/**
+ * Round pattern for game structure
+ */
+export type RoundPattern = 'down-up' | 'up-down';
 
 /**
  * ScoringRuleType enum for predefined scoring rule types
@@ -55,15 +60,16 @@ export type ScoringRule = {
  * Game model representing a full game
  */
 export type Game = {
-	id: string;
-	createdAt: string;
-	updatedAt: string;
-	players: Player[];
-	rounds: Round[];
-	scoringRule: ScoringRule;
-	isComplete: boolean;
-	maxRounds: number;
-	currentRound: number;
-	winner?: Player;
-	customMaxCards?: number; // Store the max cards setting for custom games
-};
+		id: string;
+		createdAt: string;
+		updatedAt: string;
+		players: Player[];
+		rounds: Round[];
+		scoringRule: ScoringRule;
+		isComplete: boolean;
+		maxRounds: number;
+		currentRound: number;
+		winner?: Player;
+		customMaxCards?: number; // Store the max cards setting for custom games
+		roundPattern: RoundPattern; // Store the round pattern (down-up or up-down)
+	};

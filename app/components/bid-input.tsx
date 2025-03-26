@@ -12,12 +12,13 @@ type BidInputProps = {
 };
 
 export const BidInput: React.FC<BidInputProps> = ({ players, round, onSave }) => {
-	const initialBids = round.playerResults.reduce<Record<string, number>>((acc, result) => {
+	const initialBids = round.playerResults.reduce<Record<string, number | null>>((acc, result) => {
 		acc[result.playerId] = result.bid;
+
 		return acc;
 	}, {});
 
-	const [bids, setBids] = React.useState<Record<string, number>>(initialBids);
+	const [bids, setBids] = React.useState<Record<string, number | null>>(initialBids);
 	const [validationError, setValidationError] = React.useState<string | null>(null);
 
 	function handleBidChange(playerId: string, bidValue: string): void {
@@ -25,7 +26,7 @@ export const BidInput: React.FC<BidInputProps> = ({ players, round, onSave }) =>
 
 		// Allow empty input (reset to empty string)
 		if (bidValue === '') {
-			setBids((prev) => ({ ...prev, [playerId]: 0 }));
+			setBids((prev) => ({ ...prev, [playerId]: null }));
 			setValidationError(null);
 			return;
 		}
@@ -56,7 +57,9 @@ export const BidInput: React.FC<BidInputProps> = ({ players, round, onSave }) =>
 
 	function handleSave(): void {
 		// Validate all players have submitted bids
-		const hasAllBids = players.every((player) => bids[player.id] !== undefined);
+		const hasAllBids = players.every(
+			(player) => bids[player.id] !== null && bids[player.id] !== undefined,
+		);
 		if (!hasAllBids) {
 			setValidationError('All players must submit bids');
 			return;
@@ -67,7 +70,7 @@ export const BidInput: React.FC<BidInputProps> = ({ players, round, onSave }) =>
 			...round,
 			playerResults: round.playerResults.map((result) => ({
 				...result,
-				bid: bids[result.playerId] || 0,
+				bid: bids[result.playerId] ?? 0,
 			})),
 		};
 
@@ -75,7 +78,7 @@ export const BidInput: React.FC<BidInputProps> = ({ players, round, onSave }) =>
 	}
 
 	// Calculate total bids
-	const totalBids = Object.values(bids).reduce((sum, bid) => sum + bid, 0);
+	const totalBids = Object.values(bids).reduce<number>((sum, bid) => sum + (bid ?? 0), 0);
 	const isHook = totalBids === round.cardsPerPlayer;
 
 	// Format trump suit for display

@@ -1,7 +1,24 @@
 import type { LinksFunction } from '@remix-run/node';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from '@remix-run/react';
+import {
+	Links,
+	Meta,
+	type MetaFunction,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+} from '@remix-run/react';
 
 import './styles/tailwind.css';
+
+export const meta: MetaFunction = () => {
+	return [
+		{ title: 'Up and Down the River' },
+		{
+			name: 'description',
+			content: 'Track your Up and Down the River card game scores',
+		},
+	];
+};
 
 export const links: LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },

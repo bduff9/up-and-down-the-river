@@ -27,6 +27,17 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 		})
 		.sort((a, b) => b.totalScore - a.totalScore);
 
+	// Find the highest score
+	const highestScore = playerScores.length > 0 ? playerScores[0].totalScore : 0;
+
+	// Don't show stars if all players have zero points
+	const shouldShowStars = highestScore > 0;
+
+	// Determine leading players (could be multiple in case of a tie)
+	const leadingPlayerIds = shouldShowStars
+		? playerScores.filter((p) => p.totalScore === highestScore).map((p) => p.player.id)
+		: [];
+
 	// Function to get a player's result for a specific round
 	function getPlayerRoundResult(
 		playerId: string,
@@ -57,7 +68,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 										key={round.number}
 										className="text-center p-1 sm:p-2 min-w-8 sm:min-w-12 font-medium"
 									>
-										{round.number}
+										Rd. {round.number}
 									</th>
 								))}
 								<th className="text-center p-1 sm:p-2 font-medium whitespace-nowrap">Total</th>
@@ -68,8 +79,10 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 								<tr key={player.id} className="border-b last:border-0">
 									<td className="py-1 sm:py-2 px-2 sm:pr-4 font-medium whitespace-nowrap">
 										{player.name}
-										{playerScores[0].player.id === player.id && (
-											<span className="ml-1 text-xs text-amber-500">★</span>
+										{leadingPlayerIds.includes(player.id) && (
+											<span className="ml-1 text-xs text-amber-500" title="Current leader">
+												★
+											</span>
 										)}
 									</td>
 
@@ -82,7 +95,8 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 												</td>
 											);
 
-										const madeBid = madeBidExactly(result.bid, result.tricksTaken);
+										const madeBid =
+											result.bid !== null && madeBidExactly(result.bid, result.tricksTaken);
 
 										return (
 											<td
@@ -102,8 +116,17 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ game }) => {
 					</table>
 				</div>
 
-				{game.isComplete && (
-					<div className="mt-4 text-center font-medium">Winner: {playerScores[0].player.name}!</div>
+				{game.isComplete && shouldShowStars && (
+					<div className="mt-4 text-center font-medium">
+						Winner: {playerScores[0].player.name}
+						<span className="ml-1 text-amber-500">★</span>!
+					</div>
+				)}
+
+				{game.isComplete && !shouldShowStars && (
+					<div className="mt-4 text-center font-medium">
+						Game complete! All players tied with 0 points.
+					</div>
 				)}
 			</CardContent>
 		</Card>

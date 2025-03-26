@@ -1,19 +1,8 @@
-import type { MetaFunction } from '@remix-run/node';
 import { Link } from '@remix-run/react';
 import * as React from 'react';
 import { GameHistory } from '~/components/game-history';
 import { Button } from '~/components/ui/button';
 import { isLocalStorageAvailable } from '~/lib/storage';
-
-export const meta: MetaFunction = () => {
-	return [
-		{ title: 'Up and Down the River' },
-		{
-			name: 'description',
-			content: 'Track your Up and Down the River card game scores',
-		},
-	];
-};
 
 const Index: React.FC = () => {
 	const [localStorageAvailable, setLocalStorageAvailable] = React.useState(false);

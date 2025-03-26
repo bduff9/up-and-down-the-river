@@ -4,29 +4,32 @@ import type { PlayerRoundResult, ScoringRuleConfig } from './types';
  * Calculates the score for a player in a round based on the chosen scoring rule.
  */
 export function calculateRoundScore(
-	bid: number,
-	tricksTaken: number,
-	scoringRule: ScoringRuleConfig,
-): number {
-	const exactBid = bid === tricksTaken;
+		bid: number | null,
+		tricksTaken: number,
+		scoringRule: ScoringRuleConfig,
+	): number {
+		// If bid is null, return 0 (no score for incomplete bids)
+		if (bid === null) return 0;
 
-	if (exactBid) {
-		return scoringRule.exactBidBonus + tricksTaken * scoringRule.pointsPerTrick;
-	}
+		const exactBid = bid === tricksTaken;
 
-	switch (scoringRule.pointsForMissingBid) {
-		case 'zero':
-			return 0;
-		case 'tricksOnly':
-			return tricksTaken * scoringRule.pointsPerTrick;
-		case 'penalty': {
-			const difference = Math.abs(bid - tricksTaken);
-			return -difference * (scoringRule.penaltyPerTrick || 1);
+		if (exactBid) {
+			return scoringRule.exactBidBonus + tricksTaken * scoringRule.pointsPerTrick;
 		}
-		default:
-			return 0;
+
+		switch (scoringRule.pointsForMissingBid) {
+			case 'zero':
+				return 0;
+			case 'tricksOnly':
+				return tricksTaken * scoringRule.pointsPerTrick;
+			case 'penalty': {
+				const difference = Math.abs(bid - tricksTaken);
+				return -difference * (scoringRule.penaltyPerTrick || 1);
+			}
+			default:
+				return 0;
+		}
 	}
-}
 
 /**
  * Get predefined scoring rule configuration by type
@@ -88,6 +91,6 @@ export function calculateTotalScore(playerResults: PlayerRoundResult[]): number 
 /**
  * Determine if a player made their bid exactly
  */
-export function madeBidExactly(bid: number, tricksTaken: number): boolean {
-	return bid === tricksTaken;
+export function madeBidExactly(bid: number | null, tricksTaken: number): boolean {
+	return bid !== null && bid === tricksTaken;
 }

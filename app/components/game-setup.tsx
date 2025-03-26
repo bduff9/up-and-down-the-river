@@ -4,7 +4,7 @@ import ScoringRuleSelector from '~/components/scoring-rule-selector';
 import { generateId } from '~/lib/client-utils';
 import { calculateGameStructure, createGame } from '~/lib/game-utils';
 import { saveCurrentGame } from '~/lib/storage';
-import type { Player, ScoringRuleType } from '~/lib/types';
+import type { Player, RoundPattern, ScoringRuleType } from '~/lib/types';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
@@ -27,6 +27,7 @@ export const GameSetup: React.FC = () => {
 	const [customRoundsEnabled, setCustomRoundsEnabled] = React.useState(false);
 	const [maxCardsPerPlayer, setMaxCardsPerPlayer] = React.useState(10);
 	const [totalRoundsCount, setTotalRoundsCount] = React.useState(19);
+	const [roundPattern, setRoundPattern] = React.useState<RoundPattern>('down-up');
 
 	// Calculate total rounds based on current configuration
 	const { totalRounds, roundsStructure } = React.useMemo(() => {
@@ -34,15 +35,23 @@ export const GameSetup: React.FC = () => {
 		if (customRoundsEnabled && customizationMode === 'rounds') {
 			// Estimate max cards for display purposes based on total rounds
 			const estimatedMaxCards = Math.floor((totalRoundsCount - 1) / 2);
-			return calculateGameStructure(playerCount, estimatedMaxCards);
+			return calculateGameStructure(playerCount, estimatedMaxCards, roundPattern);
 		}
 
 		// For cards per player mode
 		return calculateGameStructure(
 			playerCount,
 			customRoundsEnabled && customizationMode === 'cards' ? maxCardsPerPlayer : undefined,
+			roundPattern,
 		);
-	}, [playerCount, customRoundsEnabled, maxCardsPerPlayer, customizationMode, totalRoundsCount]);
+	}, [
+		playerCount,
+		customRoundsEnabled,
+		maxCardsPerPlayer,
+		customizationMode,
+		totalRoundsCount,
+		roundPattern,
+	]);
 
 	// When player count changes, update default max cards
 	React.useEffect(() => {
@@ -102,6 +111,10 @@ export const GameSetup: React.FC = () => {
 		setTotalRoundsCount(rounds);
 	}
 
+	function handleRoundPatternChange(value: string): void {
+		setRoundPattern(value as RoundPattern);
+	}
+
 	function handleSubmit(e: React.FormEvent): void {
 		e.preventDefault();
 
@@ -128,7 +141,7 @@ export const GameSetup: React.FC = () => {
 			customMaxCards = undefined; // Use the default based on player count
 		}
 
-		const game = createGame(players, scoringRule, customMaxCards);
+		const game = createGame(players, scoringRule, customMaxCards, roundPattern);
 
 		// Save to local storage
 		saveCurrentGame(game);
@@ -248,6 +261,23 @@ export const GameSetup: React.FC = () => {
 										</TabsContent>
 									</Tabs>
 
+									<div className="space-y-2 mt-4">
+										<Label htmlFor="round-pattern">Round Pattern</Label>
+										<Select value={roundPattern} onValueChange={handleRoundPatternChange}>
+											<SelectTrigger id="round-pattern">
+												<SelectValue placeholder="Select round pattern" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="down-up">
+													Down-Up (Start at max cards, go down to 1, then back up)
+												</SelectItem>
+												<SelectItem value="up-down">
+													Up-Down (Start at 1 card, go up to max, then back down)
+												</SelectItem>
+											</SelectContent>
+										</Select>
+									</div>
+
 									<div className="mt-2 p-2 bg-muted/20 rounded text-sm">
 										<div className="font-medium mb-1">Round Structure:</div>
 										<div className="flex flex-wrap gap-1">
@@ -264,9 +294,27 @@ export const GameSetup: React.FC = () => {
 									</div>
 								</div>
 							) : (
-								<p className="text-sm text-muted-foreground">
-									Using default: {maxCardsPerPlayer} max cards, {totalRounds} total rounds
-								</p>
+								<>
+									<p className="text-sm text-muted-foreground">
+										Using default: {maxCardsPerPlayer} max cards, {totalRounds} total rounds
+									</p>
+									<div className="space-y-2">
+										<Label htmlFor="round-pattern">Round Pattern</Label>
+										<Select value={roundPattern} onValueChange={handleRoundPatternChange}>
+											<SelectTrigger id="round-pattern">
+												<SelectValue placeholder="Select round pattern" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="down-up">
+													Down-Up (Start at max cards, go down to 1, then back up)
+												</SelectItem>
+												<SelectItem value="up-down">
+													Up-Down (Start at 1 card, go up to max, then back down)
+												</SelectItem>
+											</SelectContent>
+										</Select>
+									</div>
+								</>
 							)}
 						</div>
 

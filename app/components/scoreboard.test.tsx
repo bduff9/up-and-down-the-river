@@ -49,6 +49,7 @@ describe('Scoreboard', () => {
 		isComplete: false,
 		maxRounds: 19,
 		currentRound: 3,
+		roundPattern: 'down-up',
 	};
 
 	it('renders the scoreboard with player names and scores', () => {
@@ -64,8 +65,8 @@ describe('Scoreboard', () => {
 		expect(screen.getByText('Charlie')).toBeInTheDocument();
 
 		// Check round numbers in header
-		expect(screen.getByText('1')).toBeInTheDocument();
-		expect(screen.getByText('2')).toBeInTheDocument();
+		expect(screen.getByText('Rd. 1')).toBeInTheDocument();
+		expect(screen.getByText('Rd. 2')).toBeInTheDocument();
 
 		// Check scores - use getAllByTitle for potentially duplicate titles
 		const madeBidCells = screen.getAllByTitle('Bid: 3, Took: 3');

@@ -19,12 +19,12 @@ export const TricksInput: React.FC<TricksInputProps> = ({
 	scoringRuleConfig,
 	onSave,
 }) => {
-	const initialTricks = round.playerResults.reduce<Record<string, number>>((acc, result) => {
-		acc[result.playerId] = result.tricksTaken;
+	const initialTricks = round.playerResults.reduce<Record<string, number | null>>((acc, result) => {
+		acc[result.playerId] = result.tricksTaken || null;
 		return acc;
 	}, {});
 
-	const [tricks, setTricks] = React.useState<Record<string, number>>(initialTricks);
+	const [tricks, setTricks] = React.useState<Record<string, number | null>>(initialTricks);
 	const [validationError, setValidationError] = React.useState<string | null>(null);
 	const [scores, setScores] = React.useState<Record<string, number>>({});
 
@@ -45,7 +45,7 @@ export const TricksInput: React.FC<TricksInputProps> = ({
 
 		// Allow empty input (reset to empty string)
 		if (tricksValue === '') {
-			setTricks((prev) => ({ ...prev, [playerId]: 0 }));
+			setTricks((prev) => ({ ...prev, [playerId]: null }));
 			setValidationError(null);
 			return;
 		}
@@ -83,7 +83,7 @@ export const TricksInput: React.FC<TricksInputProps> = ({
 		}
 
 		// Validate total tricks equals cards per player
-		const totalTricks = Object.values(tricks).reduce((sum, trick) => sum + trick, 0);
+		const totalTricks = Object.values(tricks).reduce((sum, trick) => (sum ?? 0) + (trick ?? 0), 0);
 		if (totalTricks !== round.cardsPerPlayer) {
 			setValidationError(`Total tricks must equal ${round.cardsPerPlayer}`);
 			return;
@@ -103,7 +103,7 @@ export const TricksInput: React.FC<TricksInputProps> = ({
 	}
 
 	// Calculate total tricks
-	const totalTricks = Object.values(tricks).reduce((sum, trick) => sum + trick, 0);
+	const totalTricks = Object.values(tricks).reduce((sum, trick) => (sum ?? 0) + (trick ?? 0), 0);
 	const isValid = totalTricks === round.cardsPerPlayer;
 
 	// Format trump suit for display

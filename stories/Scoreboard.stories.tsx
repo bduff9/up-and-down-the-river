@@ -23,7 +23,7 @@ const players = [
 ];
 
 // Create a game with completed rounds and scores
-const createGame = (roundsCount: number, isGameComplete = false): Game => {
+const createGame = (roundsCount: number, isGameComplete = false, allZeroScores = false): Game => {
 	const rounds: Round[] = [];
 
 	// Create a set of rounds (1-10 cards per player)
@@ -36,6 +36,16 @@ const createGame = (roundsCount: number, isGameComplete = false): Game => {
 			cardsPerPlayer,
 			trumpSuit: ['hearts', 'diamonds', 'clubs', 'spades'][i % 4],
 			playerResults: players.map((player, index) => {
+				if (allZeroScores) {
+					// For the zero scores scenario
+					return {
+						playerId: player.id,
+						bid: 0,
+						tricksTaken: 0,
+						roundScore: 0,
+					};
+				}
+
 				// Create somewhat realistic scores with some variation
 				const bid = Math.floor(Math.random() * (cardsPerPlayer + 1));
 				const tricksTaken = Math.floor(Math.random() * (cardsPerPlayer + 1));
@@ -76,6 +86,7 @@ const createGame = (roundsCount: number, isGameComplete = false): Game => {
 		maxRounds: 19,
 		currentRound,
 		winner: isGameComplete ? players[0] : undefined,
+		roundPattern: 'down-up', // Add the required roundPattern
 	};
 };
 
@@ -94,5 +105,29 @@ export const MidGame: Story = {
 export const CompletedGame: Story = {
 	args: {
 		game: createGame(19, true),
+	},
+};
+
+// Add new stories for testing star logic
+export const AllZeroScores: Story = {
+	args: {
+		game: createGame(3, false, true),
+	},
+	parameters: {
+		docs: {
+			description: 'Game where all players have zero points - no stars should be shown',
+		},
+	},
+};
+
+export const CompletedGameWithZeroScores: Story = {
+	args: {
+		game: createGame(19, true, true),
+	},
+	parameters: {
+		docs: {
+			description:
+				'Completed game where all players have zero points - special message should be shown',
+		},
 	},
 };

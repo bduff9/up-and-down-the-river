@@ -53,16 +53,21 @@ const GamePage: React.FC = () => {
 			if (roundData) {
 				setCurrentRound(roundData);
 
-				// Determine if we're in trump selection, bid, or tricks phase
 				if (roundData.trumpSuit === null) {
+					// Determine if we're in trump selection, bid, or tricks phase
+					// If no trump suit is selected, we're in trump selection phase
 					setTrumpSelectionPhase(true);
 					setBidPhase(false);
 				} else {
+					// Trump has been selected, we're past the trump selection phase
 					setTrumpSelectionPhase(false);
 
-					// Check if bids are complete
-					const bidComplete = roundData.playerResults.every((p) => p.bid >= 0);
-					setBidPhase(!bidComplete);
+					// Check if any player has a null bid (indicating bid not yet entered)
+					const biddingIncomplete = roundData.playerResults.some((p) => p.bid === null);
+					setBidPhase(biddingIncomplete);
+
+					// If we're not in bidding phase and not in trump selection,
+					// we must be in the tricks phase (which is the default)
 				}
 			} else {
 				// Create a new round

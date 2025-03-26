@@ -31,8 +31,12 @@ function formatTrumpSuit(suit: string | null): React.ReactNode {
 }
 
 export const RoundTracker: React.FC<RoundTrackerProps> = ({ game, currentRound }) => {
-	// Use the game's customMaxCards value directly if it exists
-	const { roundsStructure } = calculateGameStructure(game.players.length, game.customMaxCards);
+	// Use the game's round pattern
+	const { roundsStructure } = calculateGameStructure(
+		game.players.length,
+		game.customMaxCards,
+		game.roundPattern,
+	);
 
 	return (
 		<Card>
