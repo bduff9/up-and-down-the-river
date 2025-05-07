@@ -25,9 +25,9 @@ export const GameSetup: React.FC = () => {
 	const [scoringRule, setScoringRule] = React.useState<ScoringRuleType>('standard');
 	const [customizationMode, setCustomizationMode] = React.useState<'cards' | 'rounds'>('cards');
 	const [customRoundsEnabled, setCustomRoundsEnabled] = React.useState(false);
-	const [maxCardsPerPlayer, setMaxCardsPerPlayer] = React.useState(10);
+	const [maxCardsPerPlayer, setMaxCardsPerPlayer] = React.useState(7);
 	const [totalRoundsCount, setTotalRoundsCount] = React.useState(19);
-	const [roundPattern, setRoundPattern] = React.useState<RoundPattern>('down-up');
+	const [roundPattern, setRoundPattern] = React.useState<RoundPattern>('up-down');
 
 	// Calculate total rounds based on current configuration
 	const { totalRounds, roundsStructure } = React.useMemo(() => {

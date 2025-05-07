@@ -16,3 +16,7 @@ __snapshots__/**/*.snap
 
 # Temporary files
 .tmp/
+
+
+#Ignore cursor AI rules
+.cursor/rules/codacy.mdc
