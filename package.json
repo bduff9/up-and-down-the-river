@@ -29,7 +29,7 @@
 		"@radix-ui/react-toast": "1.2.6",
 		"@remix-run/node": "2.16.2",
 		"@remix-run/react": "2.16.2",
-		"@remix-run/serve": "2.16.2",
+		"@remix-run/serve": "2.16.4",
 		"arktype": "2.1.12",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
